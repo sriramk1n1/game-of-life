@@ -2,28 +2,29 @@
     import Slider from '@bulatdashiev/svelte-slider'
     import Box from "./box.svelte"
     import Icon from "$lib/gol.svg"
-    import Show from "$lib/show.png"
-    import Hide from "$lib/hide.png"
-    let no = 14;
+    import ShowIcon from "$lib/show.png"
+    import HideIcon from "$lib/hide.png"
+
+    let no;
+    let val=[250,1000];
+    let val2=[10,30];
+    $: no = val2[0];
+    $: reconstructarr(val2[0]);
+    let view=false;
     let running=false;
+    let intervalId;
     let arr = Array.from({ length:  no}, () =>
-  Array.from({ length: no }, () => ({ count: 0, status: false }))
-);
-const update = () => {arr=arr;}
+    Array.from({ length: no }, () => ({ count: 0, status: false })));
 
-async function func2(){
-    console.log("Done")
-    let arr2;
-    arr2 = Array.from({ length:  no}, () =>
-  Array.from({ length: no }, () => ({ count: 0, status: false }))
-);
-
- arr=arr2;
- console.log(arr);
- update();
-}
-
-function setf(arr, row, col ) {
+    const update = () => {arr=arr;}
+    const reconstructarr = () => {
+        let arr2;
+        arr2 = Array.from({ length:  no}, () =>
+        Array.from({ length: no }, () => ({ count: 0, status: false })));
+        arr=arr2;
+        update();
+    }
+    const setf = (arr, row, col ) => {
         const numRows = arr.length;
         const numCols = arr[0].length;
         if (row < 0 || row >= numRows || col < 0 || col >= numCols) {
@@ -32,64 +33,56 @@ function setf(arr, row, col ) {
         arr[row][col].status = false;
         updateAdjacentCounts(arr, row, col, -1);
 }
-function sett(arr, row, col ) {
-        const numRows = arr.length;
-        const numCols = arr[0].length;
-        if (row < 0 || row >= numRows || col < 0 || col >= numCols) {
-            return;
-        }
-        arr[row][col].status = true;
-        updateAdjacentCounts(arr, row, col, +1);
-}
-function updateAdjacentCounts(arr, row, col, increment) {
-        const directions = [
-            [-1, 0], [1, 0], [0, -1], [0, 1],
-            [-1, -1], [-1, 1], [1, -1], [1, 1]
-        ];
+    const sett = (arr, row, col ) => {
+            const numRows = arr.length;
+            const numCols = arr[0].length;
+            if (row < 0 || row >= numRows || col < 0 || col >= numCols) {
+                return;
+            }
+            arr[row][col].status = true;
+            updateAdjacentCounts(arr, row, col, +1);
+    }
+    const updateAdjacentCounts = (arr, row, col, increment) => {
+            const directions = [
+                [-1, 0], [1, 0], [0, -1], [0, 1],
+                [-1, -1], [-1, 1], [1, -1], [1, 1]
+            ];
 
-        for (const [dx, dy] of directions) {
-            const newRow = row + dx;
-            const newCol = col + dy;
+            for (const [dx, dy] of directions) {
+                const newRow = row + dx;
+                const newCol = col + dy;
 
-            if (newRow >= 0 && newRow < arr.length && newCol >= 0 && newCol < arr[0].length) {
-                arr[newRow][newCol].count = arr[newRow][newCol].count + increment;
+                if (newRow >= 0 && newRow < arr.length && newCol >= 0 && newCol < arr[0].length) {
+                    arr[newRow][newCol].count = arr[newRow][newCol].count + increment;
+                }
+            }
+    }
+    const revaluate = () => {
+        for (let i=0; i<no; i++){
+            for (let j=0; j<no; j++){
+                if (arr[i][j].status==true && (arr[i][j].count<2 || arr[i][j]>3)) setf(arr,i,j);
+                else if (arr[i][j].count===3 && arr[i][j].status===false) sett(arr,i,j);
             }
         }
+        arr=arr
+    };
+
+
+    const startFunction = () => {
+        running=true;
+        intervalId = setInterval(revaluate, val[0]); // Call the function every 1000 milliseconds (1 second)
     }
-const revaluate = () => {
-    for (let i=0; i<no; i++){
-        for (let j=0; j<no; j++){
-            if (arr[i][j].status==true && (arr[i][j].count<2 || arr[i][j]>3)) setf(arr,i,j);
-            else if (arr[i][j].count===3 && arr[i][j].status===false) sett(arr,i,j);
-        }
+
+    const stopFunction = () => {
+        running=false;
+        clearInterval(intervalId);
+        intervalId = null;
     }
-    arr=arr
-};
 
-let intervalId;
-function startFunction() {
-    running=true;
-    intervalId = setInterval(revaluate, val[0]); // Call the function every 1000 milliseconds (1 second)
-  }
-
-  function stopFunction() {
-    running=false;
-    clearInterval(intervalId);
-    intervalId = null;
-  }
-
-function clear(){
-    arr = Array.from({ length: no }, () =>
-  Array.from({ length: no }, () => ({ count: 0, status: false }))
-);
-}
-let val=[250,1000];
-let val2=[10,30];
-$: no = val2[0], console.log(no);
-$: func2(val2[0]);
-console.log(no)
-let view=false;
-
+    const clear = () => {
+        arr = Array.from({ length: no }, () =>
+        Array.from({ length: no }, () => ({ count: 0, status: false })));
+    }
 </script>
 
 
@@ -97,6 +90,7 @@ let view=false;
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@100&display=swap" rel="stylesheet">
+
 <nav class="navbar">
     <div class="navleft">
     <img alt='img' src={Icon} width="50" height="50" style="padding-right: 5px; padding-top: 20px padding-left: 20px">
@@ -116,13 +110,9 @@ let view=false;
         <button on:click={startFunction} class={running==true?"gbtn":"obtn"}>Start</button>
         <button on:click={stopFunction} class={running==false?"gbtn":"obtn"}>Stop</button>
         <button on:click={clear} class="gbtn">Clear</button>
-        <button on:click={()=> view=!view} class="gbtn"><img src={view==false?Hide:Show} alt="show/hide" id="showhide" height="30px" width="30px"></button>
-
+        <button on:click={()=> view=!view} class="gbtn"><img src={view==false?HideIcon:ShowIcon} alt="show/hide" id="showhide" height="30px" width="30px"></button>
     </div>
- 
 </nav>
-
-
 
 {#key arr}
 <div class="boxes">

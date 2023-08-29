@@ -1,12 +1,12 @@
 <script>
     import { createEventDispatcher } from 'svelte';
-const dispatch = createEventDispatcher();
-let mouseclicked=true;
     export let row;
     export let col;
     export let arr;
     export let view;
-    function toggleElement(arr, row, col) {
+    const dispatch = createEventDispatcher();
+    
+    const toggleElement = (arr, row, col) => {
         const numRows = arr.length;
         const numCols = arr[0].length;
         if (row < 0 || row >= numRows || col < 0 || col >= numCols) {
@@ -23,7 +23,7 @@ let mouseclicked=true;
             arr=arr;
         }
     }
-    function updateAdjacentCounts(arr, row, col, increment) {
+    const updateAdjacentCounts = (arr, row, col, increment) => {
         const directions = [
             [-1, 0], [1, 0], [0, -1], [0, 1],
             [-1, -1], [-1, 1], [1, -1], [1, 1]
@@ -44,8 +44,7 @@ let mouseclicked=true;
     dispatch('changed');
     arr=arr;
 
-}
-
+    }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

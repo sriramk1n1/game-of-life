@@ -1,10 +1,28 @@
 <script>
     import Slider from '@bulatdashiev/svelte-slider'
     import Box from "./box.svelte"
-    let arr = Array.from({ length: 10 }, () =>
-  Array.from({ length: 10 }, () => ({ count: 0, status: false }))
+    import Icon from "$lib/gol.svg"
+    import Show from "$lib/show.png"
+    import Hide from "$lib/hide.png"
+    let no = 14;
+    let running=false;
+    let arr = Array.from({ length:  no}, () =>
+  Array.from({ length: no }, () => ({ count: 0, status: false }))
 );
 const update = () => {arr=arr;}
+
+async function func2(){
+    console.log("Done")
+    let arr2;
+    arr2 = Array.from({ length:  no}, () =>
+  Array.from({ length: no }, () => ({ count: 0, status: false }))
+);
+
+ arr=arr2;
+ console.log(arr);
+ update();
+}
+
 function setf(arr, row, col ) {
         const numRows = arr.length;
         const numCols = arr[0].length;
@@ -39,8 +57,8 @@ function updateAdjacentCounts(arr, row, col, increment) {
         }
     }
 const revaluate = () => {
-    for (let i=0; i<10; i++){
-        for (let j=0; j<10; j++){
+    for (let i=0; i<no; i++){
+        for (let j=0; j<no; j++){
             if (arr[i][j].status==true && (arr[i][j].count<2 || arr[i][j]>3)) setf(arr,i,j);
             else if (arr[i][j].count===3 && arr[i][j].status===false) sett(arr,i,j);
         }
@@ -50,62 +68,132 @@ const revaluate = () => {
 
 let intervalId;
 function startFunction() {
+    running=true;
     intervalId = setInterval(revaluate, val[0]); // Call the function every 1000 milliseconds (1 second)
   }
 
   function stopFunction() {
+    running=false;
     clearInterval(intervalId);
     intervalId = null;
   }
 
 function clear(){
-    arr = Array.from({ length: 10 }, () =>
-  Array.from({ length: 10 }, () => ({ count: 0, status: false }))
+    arr = Array.from({ length: no }, () =>
+  Array.from({ length: no }, () => ({ count: 0, status: false }))
 );
 }
-let val=[0,990]
+let val=[250,1000];
+let val2=[10,30];
+$: no = val2[0], console.log(no);
+$: func2(val2[0]);
+console.log(no)
+let view=false;
+
 </script>
 
 
 <link href='https://fonts.googleapis.com/css?family=Overpass' rel='stylesheet'>
-<nav>
-<span style="display:flex">
-    <img alt='img' src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Glider.svg/800px-Glider.svg.png" width="50" height="50" style="padding-right: 20px; padding-top: 20px padding-left: 20px">
-    <h1 align='left' style="padding-left=500px padding-right: 50px"> Game of life</h1>
-    <div style="display: flex; width:300px ">
-        <Slider class="slide" min=0 max=1000 step="10" bind:value={val} />
-       
-        </div> {val[0]}
-        <button on:click={startFunction} class="obtn">Start</button>
-<button on:click={stopFunction} class="obtn">Stop</button>
-<button on:click={clear} class="gbtn">Clear</button>
-</span>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@100&display=swap" rel="stylesheet">
+<nav class="navbar">
+    <div class="navleft">
+    <img alt='img' src={Icon} width="50" height="50" style="padding-right: 5px; padding-top: 20px padding-left: 20px">
+    <h1 align='left' id='name'> Conway's <span style="color: #858585">Game of Life</span></h1>
+    </div>
+    <div class="navright">
+        <div class="slide" on:mousewheel|preventDefault={(e)=>{
+            val2[0] += (e.deltaY<0&&val2[0]<30)?1:0;
+            val2[0] -= (e.deltaY>0&&val2[0]>3)?1:0;
+        }}><Slider max=30 step="1" bind:value={val2} /></div>
+        <span style="padding-top: 20px; padding-right: 30px">{val2[0]}x{val2[0]}</span>
+        <div class="slide" on:mousewheel|preventDefault={(e)=>{
+            val[0] += (e.deltaY<0&&val[0]<1000)?100:0;
+            val[0] -= (e.deltaY>0&&val[0]>100)?100:0;
+        }}><Slider max=1000 step="10" bind:value={val} /></div>
+        <span style="padding-top: 20px; padding-right: 30px">{val[0]}ms</span>
+        <button on:click={startFunction} class={running==true?"gbtn":"obtn"}>Start</button>
+        <button on:click={stopFunction} class={running==false?"gbtn":"obtn"}>Stop</button>
+        <button on:click={clear} class="gbtn">Clear</button>
+        <button on:click={()=> view=!view} class="gbtn"><img src={view==false?Hide:Show} alt="show/hide" id="showhide" height="30px" width="30px"></button>
+
+    </div>
+ 
 </nav>
 
 
 
 {#key arr}
-{#each {length: 10} as _,i}
-<div style="display: flex; align-items: center; margin: auto">
-{#each {length: 10} as _,j}
-<Box row={i} col={j}  {arr} on:changed={update}></Box>
-{/each}
+<div class="boxes">
+    {#each {length: no} as _,i}
+        <div style="display:inline-block ">
+            {#each {length: no} as _,j}
+                <Box row={i} col={j}  {arr} on:changed={update} {view}></Box>
+            {/each}
+        </div>
+    {/each}
 </div>
-{/each}
 {/key}
 
 
 <style>
+    .boxes {
+        padding-top: 10px;
+        display: flex;
+        justify-content: center;
+        height: 100vh;
+        max-width: 100%;
+        max-height: 90vh;
+        overflow: hidden;
+    }
+
+    .navbar {
+        font-family: "Fira Sans","Overpass","Arial";
+        background-color: #353535;
+        overflow: hidden;
+    }
+    .slide{
+        width:200px;
+        padding-top: 10px;
+    }
+    .navright {
+        display: flex;
+        justify-content: flex-end;
+        float: right;
+    }
+    .navleft {
+        display: flex;
+        justify-content: flex-start;
+        float: left;
+        height: 7vh;
+    }
+    #name {
+        overflow: hidden;
+        margin: 0;
+        padding-top: 12px;
+        padding-left: 0px;
+    }
+
+    .obtn:hover {
+        box-shadow: 5px 5px 30px -10px, -5px -5px 30px -10px;
+    }
+    .gbtn:hover {
+        box-shadow: 5px 5px 30px -10px black, -5px -5px 30px -10px black;
+    }
+
     :global(body) {
         background-color: #1e1e1e;
         color: #f2f2f2;
-        font-family: "Overpass"
+        font-family: "Overpass";
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
     }
-    nav {
-        background-color: #353535;
-        margin: 0px 0px 0px 0px;
-    }
+    
     .obtn {
+        font-size: large;
+        grid-area: btn;
         height: 30px;
         width: 100px;
         margin: 10px;
@@ -113,10 +201,10 @@ let val=[0,990]
         color: #1c1c1c;
         border-radius: 5px;
         border: 0px;
-        font-style: bold;
-        font-size: large;
+
     }
     .gbtn{
+        font-size: large;
         height: 30px;
         width: 100px;
         margin: 10px;
@@ -124,8 +212,7 @@ let val=[0,990]
         color: #ffffff;
         border-radius: 5px;
         border: 0px;
-        font-style: bold;
-        font-size: large;
+
     }
     :root {
   --track-bg: #292929;
@@ -133,4 +220,66 @@ let val=[0,990]
   --thumb-bg: #ff774d;
 }
 
+
+
+@media (max-width:600px){
+    .navright{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .boxes {
+        padding-top: 10px;
+        display: flex;
+        justify-content: center;
+        height: 100vh;
+        max-width: 100%;
+        max-height: 90vh;
+        overflow: hidden;
+    }
+
+    .navbar {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        font-family: "Fira Sans","Overpass","Arial";
+        background-color: #353535;
+
+    }
+    .slide{
+        width:100px;
+        padding-top: 10px;
+        padding-left: 20px;
+    }
+    
+    #name {
+        overflow: hidden;
+        margin: 0;
+        padding-top: 12px;
+        padding-left: 0px;
+    }
+    .obtn {
+        font-size: smaller;
+        grid-area: btn;
+        height: 30px;
+        width: 60px;
+        margin: 10px;
+        background-color: #ff774d;
+        color: #1c1c1c;
+        border-radius: 5px;
+        border: 0px;
+
+    }
+    .gbtn{
+        font-size: smaller;
+        height: 30px;
+        width: 60px;
+        margin: 10px;
+        background-color: #767676;
+        color: #ffffff;
+        border-radius: 5px;
+        border: 0px;
+
+    }
+}
 </style>

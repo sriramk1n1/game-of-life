@@ -7,11 +7,6 @@
     const dispatch = createEventDispatcher();
     
     const toggleElement = (arr, row, col) => {
-        const numRows = arr.length;
-        const numCols = arr[0].length;
-        if (row < 0 || row >= numRows || col < 0 || col >= numCols) {
-            return;
-        }
         const status = arr[row][col].status;
         if (status === true) {
             arr[row][col].status = false;
@@ -50,7 +45,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-<div class="common" class:min={arr.length<=12} class:medium={arr.length<20 && arr.length>12} class:on={arr[row][col].status} class:off={!arr[row][col].status}
+<div class="common" class:min={arr.length<=12} class:medium={arr.length<20 && arr.length>12} class:huge={arr.length>30} class:on={arr[row][col].status} class:off={!arr[row][col].status}
 on:click={clikk} on:mouseleave|preventDefault|capture|stopPropagation={(e)=>{
     if (e.buttons===1 && arr[row][col].status===false){
         clikk();
@@ -82,6 +77,10 @@ on:click={clikk} on:mouseleave|preventDefault|capture|stopPropagation={(e)=>{
     .medium {
         min-width: 30px;
         min-height: 30px;
+    }
+    .huge {
+        min-width: 10px;
+        min-height: 10px;
     }
     .on {
         

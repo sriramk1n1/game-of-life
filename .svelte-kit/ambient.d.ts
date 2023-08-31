@@ -36,6 +36,7 @@ declare module '$env/static/private' {
 	export const TERM_PROGRAM_VERSION: string;
 	export const npm_config_resolution_mode: string;
 	export const NODE: string;
+	export const DOTNET_ROOT: string;
 	export const SSH_AUTH_SOCK: string;
 	export const COLOR: string;
 	export const npm_config_local_prefix: string;
@@ -65,11 +66,13 @@ declare module '$env/static/private' {
 	export const INVOCATION_ID: string;
 	export const MANAGERPID: string;
 	export const INIT_CWD: string;
+	export const DOTNET_BUNDLE_EXTRACT_BASE_DIR: string;
 	export const CHROME_DESKTOP: string;
 	export const npm_lifecycle_script: string;
 	export const GJS_DEBUG_OUTPUT: string;
 	export const VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 	export const GNOME_SETUP_DISPLAY: string;
+	export const npm_config_open: string;
 	export const npm_config_npm_version: string;
 	export const XDG_SESSION_CLASS: string;
 	export const TERM: string;
@@ -144,6 +147,7 @@ declare module '$env/dynamic/private' {
 		TERM_PROGRAM_VERSION: string;
 		npm_config_resolution_mode: string;
 		NODE: string;
+		DOTNET_ROOT: string;
 		SSH_AUTH_SOCK: string;
 		COLOR: string;
 		npm_config_local_prefix: string;
@@ -173,11 +177,13 @@ declare module '$env/dynamic/private' {
 		INVOCATION_ID: string;
 		MANAGERPID: string;
 		INIT_CWD: string;
+		DOTNET_BUNDLE_EXTRACT_BASE_DIR: string;
 		CHROME_DESKTOP: string;
 		npm_lifecycle_script: string;
 		GJS_DEBUG_OUTPUT: string;
 		VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 		GNOME_SETUP_DISPLAY: string;
+		npm_config_open: string;
 		npm_config_npm_version: string;
 		XDG_SESSION_CLASS: string;
 		TERM: string;

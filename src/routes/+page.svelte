@@ -25,21 +25,11 @@
         update();
     }
     const setf = (arr, row, col, arrcopy ) => {
-        const numRows = arr.length;
-        const numCols = arr[0].length;
-        if (row < 0 || row >= numRows || col < 0 || col >= numCols) {
-            return;
-        }
         arr[row][col].status = false;
         arrcopy[row][col].status = false;
         updateAdjacentCounts(arrcopy, row, col, -1);
 }
     const sett = (arr, row, col, arrcopy ) => {
-            const numRows = arr.length;
-            const numCols = arr[0].length;
-            if (row < 0 || row >= numRows || col < 0 || col >= numCols) {
-                return;
-            }
             arr[row][col].status = true;
             arrcopy[row][col].status = true;
             updateAdjacentCounts(arrcopy, row, col, +1);
@@ -64,7 +54,7 @@
         console.log(arrcopy)
         for (let i=0; i<no; i++){
             for (let j=0; j<no; j++){
-                if (arr[i][j].status==true && (arr[i][j].count<2 || arr[i][j]>3)) setf(arr,i,j,arrcopy);
+                if (arr[i][j].status==true && (arr[i][j].count<2 || arr[i][j].count>3)) setf(arr,i,j,arrcopy);
                 else if (arr[i][j].count===3 && arr[i][j].status===false) sett(arr,i,j,arrcopy);
             }
         }
@@ -74,7 +64,7 @@
 
     const startFunction = () => {
         running=true;
-        intervalId = setInterval(revaluate, val[0]); // Call the function every 1000 milliseconds (1 second)
+        intervalId = setInterval(revaluate, val[0]); 
     }
 
     const stopFunction = () => {

@@ -1,5 +1,6 @@
 <script>
     import { createEventDispatcher } from 'svelte';
+    import {clicked,clickedtouch} from "./data.js"
     export let row;
     export let col;
     export let arr;
@@ -37,20 +38,25 @@
     const clikk = () => {
     toggleElement(arr, row, col);
     dispatch('changed');
-    arr=arr;
-
     }
+
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div class="common" class:min={arr.length<=12} class:medium={arr.length<20 && arr.length>12} class:huge={arr.length>30} class:on={arr[row][col].status} class:off={!arr[row][col].status}
-on:click={clikk} on:mouseleave|preventDefault|capture|stopPropagation={(e)=>{
-    if (e.buttons===1 && arr[row][col].status===false){
-        clikk();
-    }
-}} on:mousedown|preventDefault>
+    on:mousemove ={(e)=>{
+        if(arr[row][col].status===false && $clicked===true)
+            clikk();
+    }}  
+    on:mousedown={()=>{
+        $clicked=true;
+    }}
+    on:click={()=>clikk()}
+    on:mouseup={()=>{$clicked=false;
+}}
+> 
 <span class:disp={!view}>{arr[row][col].count}</span>
 </div>
 

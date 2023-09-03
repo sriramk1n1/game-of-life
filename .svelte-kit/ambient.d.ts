@@ -72,7 +72,6 @@ declare module '$env/static/private' {
 	export const GJS_DEBUG_OUTPUT: string;
 	export const VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 	export const GNOME_SETUP_DISPLAY: string;
-	export const npm_config_open: string;
 	export const npm_config_npm_version: string;
 	export const XDG_SESSION_CLASS: string;
 	export const TERM: string;
@@ -183,7 +182,6 @@ declare module '$env/dynamic/private' {
 		GJS_DEBUG_OUTPUT: string;
 		VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 		GNOME_SETUP_DISPLAY: string;
-		npm_config_open: string;
 		npm_config_npm_version: string;
 		XDG_SESSION_CLASS: string;
 		TERM: string;
